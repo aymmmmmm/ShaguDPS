@@ -162,6 +162,7 @@ parser.AddData = function(self, source, action, target, value, school, datatype)
   -- clear "current" on fight start
   if start_next_segment and data["classes"][source] and data["classes"][source] ~= "__other__" then
     data["damage"][1] = {}
+    data["damage_taken"][1] = {}
     data["heal"][1] = {}
 
     start_next_segment = nil
@@ -241,6 +242,47 @@ parser.AddData = function(self, source, action, target, value, school, datatype)
       else
         entry[source]["_ctime"] = entry[source]["_ctime"] + (GetTime() - entry[source]["_tick"])
         entry[source]["_tick"] = GetTime()
+      end
+    end
+  end
+
+  -- record damage taken (keyed by target instead of source)
+  if datatype == "damage" and target and type(target) == "string" then
+    target = trim(target)
+    local target_type = parser:ScanName(target)
+
+    if target_type == "PLAYER" or target_type == "PET" then
+      for segment = 0, 1 do
+        local entry = data["damage_taken"][segment]
+
+        -- resolve pet owner
+        local record_target = target
+        if config.merge_pets == 1 and target_type == "PET" and data["classes"][target] then
+          local owner = data["classes"][target]
+          if not entry[owner] then
+            entry[owner] = { ["_sum"] = 0, ["_ctime"] = 1 }
+          end
+          record_target = owner
+        end
+
+        if not entry[record_target] then
+          entry[record_target] = { ["_sum"] = 0, ["_ctime"] = 1 }
+        end
+
+        local record_action = action or ShaguDPS_Locale["Auto Hit"]
+        entry[record_target][record_action] = (entry[record_target][record_action] or 0) + tonumber(value)
+        entry[record_target]["_sum"] = (entry[record_target]["_sum"] or 0) + tonumber(value)
+
+        entry[record_target]["_ctime"] = entry[record_target]["_ctime"] or 1
+        entry[record_target]["_tick"] = entry[record_target]["_tick"] or GetTime()
+
+        if entry[record_target]["_tick"] + 5 < GetTime() then
+          entry[record_target]["_tick"] = GetTime()
+          entry[record_target]["_ctime"] = entry[record_target]["_ctime"] + 5
+        else
+          entry[record_target]["_ctime"] = entry[record_target]["_ctime"] + (GetTime() - entry[record_target]["_tick"])
+          entry[record_target]["_tick"] = GetTime()
+        end
       end
     end
   end

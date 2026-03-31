@@ -221,7 +221,7 @@ local combatlog_parser = {
 
   [DAMAGESHIELDSELFOTHER] = function(d, value, school, target)
     -- You reflect %d %s damage to %s.
-    return d.source, "Reflect ("..school..")", target, value, school, "damage"
+    return d.source, L["Reflect"].." ("..school..")", target, value, school, "damage"
   end,
 
   [SPELLLOGSCHOOLOTHERSELF] = function(d, source, attack, value, school)
@@ -316,12 +316,12 @@ local combatlog_parser = {
 
   [DAMAGESHIELDOTHERSELF] = function(d, source, value, school)
     -- %s reflects %d %s damage to you.
-    return source, "Reflect ("..school..")", d.target, value, school, "damage"
+    return source, L["Reflect"].." ("..school..")", d.target, value, school, "damage"
   end,
 
   [DAMAGESHIELDOTHEROTHER] = function(d, source, value, school, target)
     -- %s reflects %d %s damage to %s.
-    return source, "Reflect ("..school..")", target, value, school, "damage"
+    return source, L["Reflect"].." ("..school..")", target, value, school, "damage"
   end,
 
   [HEALEDCRITOTHERSELF] = function(d, source, spell, value)
@@ -406,7 +406,8 @@ local resist = sanitize(RESIST_TRAILER)
 local _, num, pattern, result, a1, a2, a3, a4, a5
 
 -- use same strings each time
-local empty, physical, autohit = "", "physical", "Auto Hit"
+local L = ShaguDPS_Locale
+local empty, physical, autohit = "", "physical", L["Auto Hit"]
 local player = UnitName("player")
 
 -- call all datasources on each event

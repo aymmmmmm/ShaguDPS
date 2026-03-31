@@ -1,60 +1,75 @@
-# ShaguDPS
+# ShaguDPS (Modified)
 
-A very small and lightweight damage meter. The combat log is parsed in a locale-independent way and should work on every 1.12 (vanilla) and 2.4.3 (burning crusade) based client.
+基于 [shagu/ShaguDPS](https://github.com/shagu/ShaguDPS) v3.0.1 的修改版本。
 
-The goal is not to compete with the big players like [DPSMate](https://github.com/Geigerkind/DPSMate) or [Recount](https://www.curseforge.com/wow/addons/recount),
-but instead to offer a simple damage tracker, that is fast and uses the least amount of resources as possible.
+原版是一个轻量级的伤害统计插件，以无关语言环境的方式解析战斗日志，支持 1.12（经典旧世）和 2.4.3（燃烧的远征）客户端。
 
-**So don't expect to see anything fancy here.**
+## 相比原版的改动
 
-![ShaguDPS](screenshot.jpg)
+### 受到伤害追踪
+- 新增 **Damage Taken**（受到伤害）和 **DTPS**（每秒受到伤害）两个视图模式
+- 在模式选择菜单中可直接切换到 DT / DTPS 视图
+- Tooltip 显示受到伤害的详细分技能统计
+- 支持宠物合并（将宠物受到的伤害归入主人）
 
-![ShaguDPS](screenshot2.jpg)
+### 中文本地化
+- 新增 `locales.lua`，自动检测客户端语言
+- 支持简体中文 (zhCN) 和繁体中文 (zhTW)
+- 所有 UI 文本（设置面板、工具提示、斜杠命令帮助、对话框）均已汉化
 
-## Installation (Vanilla, 1.12)
-1. Download **[Latest Version](https://github.com/shagu/ShaguDPS/archive/master.zip)**
-2. Unpack the Zip file
-3. Rename the folder "ShaguDPS-master" to "ShaguDPS"
-4. Copy "ShaguDPS" into Wow-Directory\Interface\AddOns
-5. Restart Wow
+## 安装 (Vanilla, 1.12)
+1. 下载并解压
+2. 将 `ShaguDPS` 文件夹复制到 `Wow目录\Interface\AddOns`
+3. 重启游戏
 
-## Installation (The Burning Crusade, 2.4.3)
-1. Download **[Latest Version](https://github.com/shagu/ShaguDPS/archive/master.zip)**
-2. Unpack the Zip file
-3. Rename the folder "ShaguDPS-master" to "ShaguDPS-tbc"
-4. Copy "ShaguDPS-tbc" into Wow-Directory\Interface\AddOns
-5. Restart Wow
+## 安装 (The Burning Crusade, 2.4.3)
+1. 下载并解压
+2. 将文件夹重命名为 `ShaguDPS-tbc`
+3. 复制到 `Wow目录\Interface\AddOns`
+4. 重启游戏
 
-## Commands
+## 命令
 
-The following commands can be used to access the settings:
+以下斜杠命令均可使用：
 * **/shagudps**
 * **/sdps**
 * **/sd**
 
-If one is already used by another addon, just pick an alternative command.
-Available options are:
+可用选项：
 
 ```
-/sdps visible 1        Show main window (0 or 1)
-/sdps height 17        Bar height (any number)
-/sdps trackall 0       Track all nearby units (0 or 1)
-/sdps texture 2        Set the statusbar texture (1 to 4)
-/sdps pastel 0         Use pastel colors (0 or 1)
-/sdps backdrop 1       Show window backdrop and border (0 or 1)
-/sdps lock 0           Lock window and prevent it from being moved
-/sdps toggle           Toggle visibility of the main window
+/sdps visible 1        显示主窗口 (0 或 1)
+/sdps height 17        条形高度 (任意数字)
+/sdps spacing 0        条形间距 (任意数字)
+/sdps trackall 0       追踪所有附近单位 (0 或 1)
+/sdps mergepet 1       合并宠物数据至主人 (0 或 1)
+/sdps texture 2        设置状态条材质 (1 到 4)
+/sdps pastel 0         使用柔和配色 (0 或 1)
+/sdps backdrop 1       显示窗口背景和边框 (0 或 1)
+/sdps lock 0           锁定窗口 (0 或 1)
+/sdps toggle           切换窗口显示
 ```
 
-## Combat Log Range
+## 视图模式
 
-ShaguDPS relies fully on the combat log and does not have any sort of raid-syncing between players.
-That means, thing you see are limited by the maximum range your combat log can display. The game defaults are set to 40 yards.
-If you want to increase that range, you can run the following command in order to set it to 200:
+| 模式 | 说明 |
+|------|------|
+| Damage | 造成的伤害总量 |
+| DPS | 每秒伤害 |
+| Heal | 治疗量（有效治疗） |
+| HPS | 每秒治疗 |
+| Damage Taken | 受到的伤害总量 |
+| DTPS | 每秒受到的伤害 |
+
+每个窗口可独立切换 **当前战斗 / 总计** 片段和视图模式。
+
+## 战斗日志范围
+
+ShaguDPS 完全依赖战斗日志，不具备团队同步功能。游戏默认战斗日志范围为 40 码。如需扩大到 200 码：
 
     /run for _,n in pairs({"Party", "PartyPet", "FriendlyPlayers", "FriendlyPlayersPets", "HostilePlayers", "HostilePlayersPets", "Creature" }) do SetCVar("CombatLogRange"..n, 200) end
 
-Alternatively you can set it manually in your Config.wtf:
+或在 Config.wtf 中手动设置：
 
     SET CombatLogRangeParty "200"
     SET CombatLogRangePartyPet "200"
@@ -64,5 +79,4 @@ Alternatively you can set it manually in your Config.wtf:
     SET CombatLogRangeHostilePlayersPets "200"
     SET CombatLogRangeCreature "200"
 
-You should keep in mind that some unitframe-addons rely on the combat log range to be set exactly to "40".
-Increasing the range, can break the 40y range checks of those, and others might simply reset it back to "40".
+注意：部分单位框架插件依赖战斗日志范围为 40 码，扩大范围可能影响其 40 码距离检测功能。

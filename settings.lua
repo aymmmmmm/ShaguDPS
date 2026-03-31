@@ -1,4 +1,5 @@
 -- load public variables into local
+local L = ShaguDPS_Locale
 local settings = ShaguDPS.settings
 local window = ShaguDPS.window
 local parser = ShaguDPS.parser
@@ -235,17 +236,17 @@ settings.btnClose:SetScript("OnEnter", function() this:SetBackdropBorderColor(1.
 settings.btnClose:SetScript("OnLeave", function() this:SetBackdropBorderColor(0.4, 0.4, 0.4, 1) end)
 settings.btnClose:SetScript("OnClick", function() settings:Hide() end)
 
-settings:CreateConfig("Parser", nil, "header")
-settings:CreateConfig("Track All Nearby Units", "track_all_units", "boolean")
-settings:CreateConfig("Merge Pets With Owner", "merge_pets", "boolean")
+settings:CreateConfig(L["Parser"], nil, "header")
+settings:CreateConfig(L["Track All Nearby Units"], "track_all_units", "boolean")
+settings:CreateConfig(L["Merge Pets With Owner"], "merge_pets", "boolean")
 
-settings:CreateConfig("Window", nil, "header")
-settings:CreateConfig("Bar Texture", "texture", ShaguDPS.textures)
-settings:CreateConfig("Bar Height", "height", "number")
-settings:CreateConfig("Bar Spacing", "spacing", "number")
-settings:CreateConfig("Pastel Colors", "pastel", "boolean")
-settings:CreateConfig("Show Backdrops", "backdrop", "boolean")
-settings:CreateConfig("Lock Windows", "lock", "boolean")
+settings:CreateConfig(L["Window"], nil, "header")
+settings:CreateConfig(L["Bar Texture"], "texture", ShaguDPS.textures)
+settings:CreateConfig(L["Bar Height"], "height", "number")
+settings:CreateConfig(L["Bar Spacing"], "spacing", "number")
+settings:CreateConfig(L["Pastel Colors"], "pastel", "boolean")
+settings:CreateConfig(L["Show Backdrops"], "backdrop", "boolean")
+settings:CreateConfig(L["Lock Windows"], "lock", "boolean")
 
 -- Provide Slash Commands
 SLASH_SHAGUMETER1, SLASH_SHAGUMETER2, SLASH_SHAGUMETER3 = "/shagudps", "/sdps", "/sd"
@@ -257,16 +258,16 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
 
   if (msg == "" or msg == nil) then
     p("|cffffcc00Shagu|cffffffffDPS:")
-    p("  /sdps visible " .. config.visible .. " |cffcccccc- Show main window")
-    p("  /sdps height " .. config.height .. " |cffcccccc- Bar height")
-    p("  /sdps spacing " .. config.spacing .. " |cffcccccc- Bar spacing")
-    p("  /sdps trackall " .. config.track_all_units .. " |cffcccccc- Track all nearby units")
-    p("  /sdps mergepet " .. config.merge_pets .. " |cffcccccc- Merge pets into owner data")
-    p("  /sdps texture " .. config.texture .. " |cffcccccc- Set the statusbar texture")
-    p("  /sdps pastel " .. config.pastel .. " |cffcccccc- Use pastel colors")
-    p("  /sdps backdrop " .. config.backdrop .. " |cffcccccc- Show window backdrop and border")
-    p("  /sdps lock " .. config.lock .. " |cffcccccc- Lock window")
-    p("  /sdps toggle |cffcccccc- Toggle window")
+    p("  /sdps visible " .. config.visible .. " |cffcccccc- " .. L["Show main window"])
+    p("  /sdps height " .. config.height .. " |cffcccccc- " .. L["Bar height"])
+    p("  /sdps spacing " .. config.spacing .. " |cffcccccc- " .. L["Bar spacing"])
+    p("  /sdps trackall " .. config.track_all_units .. " |cffcccccc- " .. L["Track all nearby units"])
+    p("  /sdps mergepet " .. config.merge_pets .. " |cffcccccc- " .. L["Merge pets into owner data"])
+    p("  /sdps texture " .. config.texture .. " |cffcccccc- " .. L["Set the statusbar texture"])
+    p("  /sdps pastel " .. config.pastel .. " |cffcccccc- " .. L["Use pastel colors"])
+    p("  /sdps backdrop " .. config.backdrop .. " |cffcccccc- " .. L["Show window backdrop and border"])
+    p("  /sdps lock " .. config.lock .. " |cffcccccc- " .. L["Lock window"])
+    p("  /sdps toggle |cffcccccc- " .. L["Toggle window"])
     return
   end
 
@@ -277,33 +278,33 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       config.visible = tonumber(args)
       ShaguDPS_Config = config
       window.Refresh(true)
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Visible: " .. config.visible)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Visible"] .. ": " .. config.visible)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 0-1")
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-1")
     end
   elseif strlower(cmd) == "lock" then
     if tonumber(args) and (tonumber(args) == 1 or tonumber(args) == 0) then
       config.lock = tonumber(args)
       ShaguDPS_Config = config
       window.Refresh(true)
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Lock: " .. config.lock)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Lock"] .. ": " .. config.lock)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 0-1")
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-1")
     end
   elseif strlower(cmd) == "toggle" then
     config.visible = config.visible == 1 and 0 or 1
     ShaguDPS_Config = config
     window.Refresh(true)
-    p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Visible: " .. config.visible)
+    p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Visible"] .. ": " .. config.visible)
   elseif strlower(cmd) == "height" then
     if tonumber(args) then
       config.height = tonumber(args)
       ShaguDPS_Config = config
       window.Refresh(true)
 
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Bar height: " .. config.height)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Bar height"] .. ": " .. config.height)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 1-999")
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 1-999")
     end
   elseif strlower(cmd) == "spacing" then
     if tonumber(args) then
@@ -311,9 +312,9 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       ShaguDPS_Config = config
       window.Refresh(true)
 
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Bar spacing: " .. config.spacing)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Bar spacing"] .. ": " .. config.spacing)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 0-" .. config.height)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-" .. config.height)
     end
   elseif strlower(cmd) == "trackall" then
     if tonumber(args) and (tonumber(args) == 1 or tonumber(args) == 0) then
@@ -321,9 +322,9 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       ShaguDPS_Config = config
       window.Refresh(true)
 
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Track all units: " .. config.track_all_units)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Track all units"] .. ": " .. config.track_all_units)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 0-1")
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-1")
     end
   elseif strlower(cmd) == "mergepet" then
     if tonumber(args) and (tonumber(args) == 1 or tonumber(args) == 0) then
@@ -331,9 +332,9 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       ShaguDPS_Config = config
       window.Refresh(true)
 
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Merge pet: " .. config.merge_pets)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Merge pet"] .. ": " .. config.merge_pets)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 0-1")
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-1")
     end
   elseif strlower(cmd) == "texture" then
     if tonumber(args) and textures[tonumber(args)] then
@@ -341,9 +342,9 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       ShaguDPS_Config = config
       window.Refresh(true)
 
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Texture: " .. config.texture)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Texture"] .. ": " .. config.texture)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 1-" .. table.getn(textures))
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 1-" .. table.getn(textures))
     end
   elseif strlower(cmd) == "pastel" then
     if tonumber(args) and (tonumber(args) == 1 or tonumber(args) == 0) then
@@ -351,9 +352,9 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       ShaguDPS_Config = config
       window.Refresh(true)
 
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Use pastel colors: " .. config.pastel)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Use pastel colors"] .. ": " .. config.pastel)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 0-1")
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-1")
     end
   elseif strlower(cmd) == "backdrop" then
     if tonumber(args) and (tonumber(args) == 1 or tonumber(args) == 0) then
@@ -361,9 +362,9 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       ShaguDPS_Config = config
       window.Refresh(true)
 
-      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc Show window backdrop: " .. config.backdrop)
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Show window backdrop"] .. ": " .. config.backdrop)
     else
-      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 Valid Options are 0-1")
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-1")
     end
   end
 end

@@ -2,6 +2,7 @@
 local tbc = ShaguDPS.expansion() == "tbc" and true or nil
 
 -- load public variables into local
+local L = ShaguDPS_Locale
 local window = ShaguDPS.window
 local parser = ShaguDPS.parser
 
@@ -42,7 +43,7 @@ local backdrop_border = {
 -- templates describing the window contents
 local view_templates = {
   [1] = { -- damage
-    name = "Damage",
+    name = L["Damage"],
     sort = "normal",
     bar_max = "best",
     bar_val = "value",
@@ -53,7 +54,7 @@ local view_templates = {
     bar_string_params = { "value", "percent" },
   },
   [2] = { -- dps
-    name = "DPS",
+    name = L["DPS"],
     sort = "per_second",
     bar_max = "persecond_best",
     bar_val = "value_persecond",
@@ -64,7 +65,7 @@ local view_templates = {
     bar_string_params = { "value_persecond", "percent_persecond" },
   },
   [3] = { -- heal
-    name = "Heal",
+    name = L["Heal"],
     sort = "normal",
     bar_max = "best",
     bar_val = "effective_value",
@@ -75,7 +76,7 @@ local view_templates = {
     bar_string_params = { "effective_value", "effective_percent" },
   },
   [4] = { -- hps
-    name = "HPS",
+    name = L["HPS"],
     sort = "per_second",
     bar_max = "persecond_best",
     bar_val = "effective_value_persecond",
@@ -85,19 +86,43 @@ local view_templates = {
     bar_string = "%s (%.1f%%)",
     bar_string_params = { "effective_value_persecond", "effective_percent" },
   },
+  [5] = { -- damage taken
+    name = L["Damage Taken"],
+    sort = "normal",
+    bar_max = "best",
+    bar_val = "value",
+    bar_lower_max = nil,
+    bar_lower_val = nil,
+    chat_string = "%s (%.1f%%)",
+    bar_string = "%s (%.1f%%)",
+    bar_string_params = { "value", "percent" },
+  },
+  [6] = { -- dtps
+    name = L["DTPS"],
+    sort = "per_second",
+    bar_max = "persecond_best",
+    bar_val = "value_persecond",
+    bar_lower_max = nil,
+    bar_lower_val = nil,
+    chat_string = "%s (%.1f%%)",
+    bar_string = "%s (%.1f%%)",
+    bar_string_params = { "value_persecond", "percent_persecond" },
+  },
 }
 
 -- panel button templates
 local menubuttons = {
   -- segments
-  ["Current"]  = { 0, 1, -25.5, "Current Segment", "|cffffffffShow current fight",      "segment" },
-  ["Overall"]  = { 1, 0, -25.5, "Overall Segment", "|cffffffffShow all fights",         "segment" },
+  ["Current"]  = { 0, 1, -25.5, L["Current Segment"], "|cffffffff" .. L["Show current fight"],      "segment", L["Current"] },
+  ["Overall"]  = { 1, 0, -25.5, L["Overall Segment"], "|cffffffff" .. L["Show all fights"],         "segment", L["Overall"] },
 
   -- modes
-  ["Damage"]   = { 0, 1, 25.5,  "Damage View",     "|cffffffffShow Damage Done",        "view" },
-  ["DPS"]      = { 1, 2, 25.5,  "DPS View",        "|cffffffffShow Damage Per Second",  "view" },
-  ["Heal"]     = { 2, 3, 25.5,  "Heal View",       "|cffffffffShow Healing Done",       "view" },
-  ["HPS"]      = { 3, 4, 25.5,  "HPS View",        "|cffffffffShow Heal Per Second",    "view" },
+  ["Damage"]   = { 0, 1, 25.5,  L["Damage View"],     "|cffffffff" .. L["Show Damage Done"],        "view", L["Damage"] },
+  ["DPS"]      = { 1, 2, 25.5,  L["DPS View"],        "|cffffffff" .. L["Show Damage Per Second"],  "view", L["DPS"] },
+  ["Heal"]     = { 2, 3, 25.5,  L["Heal View"],       "|cffffffff" .. L["Show Healing Done"],       "view", L["Heal"] },
+  ["HPS"]      = { 3, 4, 25.5,  L["HPS View"],        "|cffffffff" .. L["Show Heal Per Second"],    "view", L["HPS"] },
+  ["DT"]       = { 4, 5, 25.5,  L["DT View"],         "|cffffffff" .. L["Show Damage Taken"],      "view", L["Damage Taken"] },
+  ["DTPS"]     = { 5, 6, 25.5,  L["DTPS View"],       "|cffffffff" .. L["Show Damage Taken Per Second"], "view", L["DTPS"] },
 }
 
 -- default colors of chat types
@@ -192,22 +217,25 @@ local function barTooltipShow()
 
   GameTooltip:AddLine(this.title .. ":")
 
-  if config[wid].view == 1 or config[wid].view == 2 then
-    GameTooltip:AddDoubleLine("|cffffffffDamage", "|cffffffff" .. value)
-    GameTooltip:AddDoubleLine("|cffffffffDamage Per Second", "|cffffffff" .. persec)
+  if config[wid].view == 5 or config[wid].view == 6 then
+    GameTooltip:AddDoubleLine("|cffffffff" .. L["Damage Taken"], "|cffffffff" .. value)
+    GameTooltip:AddDoubleLine("|cffffffff" .. L["DTPS"], "|cffffffff" .. persec)
+  elseif config[wid].view == 1 or config[wid].view == 2 then
+    GameTooltip:AddDoubleLine("|cffffffff" .. L["Damage"], "|cffffffff" .. value)
+    GameTooltip:AddDoubleLine("|cffffffff" .. L["Damage Per Second"], "|cffffffff" .. persec)
   elseif config[wid].view == 3 or config[wid].view == 4 then
     local evalue = segment[this.unit]["_esum"]
     local epersec = round(evalue / segment[this.unit]["_ctime"], 1)
 
-    GameTooltip:AddDoubleLine("|cffffffffHealing", "|cffffffff" .. evalue)
-    GameTooltip:AddDoubleLine("|cffaaaaaaOverheal", "|cffcc8888+" .. value - evalue)
+    GameTooltip:AddDoubleLine("|cffffffff" .. L["Healing"], "|cffffffff" .. evalue)
+    GameTooltip:AddDoubleLine("|cffaaaaaa" .. L["Overheal"], "|cffcc8888+" .. value - evalue)
     GameTooltip:AddLine(" ")
-    GameTooltip:AddDoubleLine("|cffffffffHealing Per Second", "|cffffffff" .. epersec)
-    GameTooltip:AddDoubleLine("|cffaaaaaaOverheal Per Second", "|cffcc8888+" .. persec - epersec)
+    GameTooltip:AddDoubleLine("|cffffffff" .. L["Healing Per Second"], "|cffffffff" .. epersec)
+    GameTooltip:AddDoubleLine("|cffaaaaaa" .. L["Overheal Per Second"], "|cffcc8888+" .. persec - epersec)
   end
 
   GameTooltip:AddLine(" ")
-  GameTooltip:AddLine("Details:")
+  GameTooltip:AddLine(L["Details:"])
 
   for attack, damage in spairs(segment[this.unit], sort_algorithms.single_spell) do
     if attack and not internals[attack] then
@@ -257,6 +285,16 @@ local function ResetData()
   -- clear current damage data
   for k, v in pairs(data.damage[1]) do
     data.damage[1][k] = nil
+  end
+
+  -- clear overall damage taken data
+  for k, v in pairs(data.damage_taken[0]) do
+    data.damage_taken[0][k] = nil
+  end
+
+  -- clear current damage taken data
+  for k, v in pairs(data.damage_taken[1]) do
+    data.damage_taken[1][k] = nil
   end
 
   -- clear overall heal data
@@ -504,24 +542,30 @@ local function Refresh(self, force, report)
     -- update panel button appearance
     if config[wid].view == 1 then
       self.btnDamage.caption:SetTextColor(1,.9,0,1)
-      self.btnMode.caption:SetText("Damage")
+      self.btnMode.caption:SetText(L["Damage"])
     elseif config[wid].view == 2 then
       self.btnDPS.caption:SetTextColor(1,.9,0,1)
-      self.btnMode.caption:SetText("DPS")
+      self.btnMode.caption:SetText(L["DPS"])
     elseif config[wid].view == 3 then
       self.btnHeal.caption:SetTextColor(1,.9,0,1)
-      self.btnMode.caption:SetText("Heal")
+      self.btnMode.caption:SetText(L["Heal"])
     elseif config[wid].view == 4 then
       self.btnHPS.caption:SetTextColor(1,.9,0,1)
-      self.btnMode.caption:SetText("HPS")
+      self.btnMode.caption:SetText(L["HPS"])
+    elseif config[wid].view == 5 then
+      self.btnDT.caption:SetTextColor(1,.9,0,1)
+      self.btnMode.caption:SetText(L["Damage Taken"])
+    elseif config[wid].view == 6 then
+      self.btnDTPS.caption:SetTextColor(1,.9,0,1)
+      self.btnMode.caption:SetText(L["DTPS"])
     end
 
     if config[wid].segment == 0 then
       self.btnOverall.caption:SetTextColor(1,.9,0,1)
-      self.btnSegment.caption:SetText("Overall")
+      self.btnSegment.caption:SetText(L["Overall"])
     elseif config[wid].segment == 1 then
       self.btnCurrent.caption:SetTextColor(1,.9,0,1)
-      self.btnSegment.caption:SetText("Current")
+      self.btnSegment.caption:SetText(L["Current"])
     end
 
     self:SetWidth((config[wid].width or 177))
@@ -534,11 +578,13 @@ local function Refresh(self, force, report)
     bar:Hide()
   end
 
-  -- set view to damage or heal
+  -- set view to damage, heal or damage taken
   if config[wid].view == 1 or config[wid].view == 2 then
     self.segment = data.damage[(config[wid].segment or 0)]
   elseif config[wid].view == 3 or config[wid].view == 4 then
     self.segment = data.heal[(config[wid].segment or 0)]
+  elseif config[wid].view == 5 or config[wid].view == 6 then
+    self.segment = data.damage_taken[(config[wid].segment or 0)]
   end
 
   -- read view settings
@@ -551,7 +597,7 @@ local function Refresh(self, force, report)
   -- report to chat if flag is set
   if report then
     local name = view_templates[config[wid].view].name
-    local seg = config[wid].segment == 1 and "Current" or "Overall"
+    local seg = config[wid].segment == 1 and L["Current"] or L["Overall"]
     announce("ShaguDPS - " .. seg .. " " .. name .. ":")
   end
 
@@ -715,9 +761,9 @@ local function CreateWindow(wid)
 
   frame.btnSegment.caption = frame.btnSegment:CreateFontString("ShaguDPSTitle", "OVERLAY", "GameFontWhite")
   frame.btnSegment.caption:SetFont(STANDARD_TEXT_FONT, 9)
-  frame.btnSegment.caption:SetText("Overall")
+  frame.btnSegment.caption:SetText(L["Overall"])
   frame.btnSegment.caption:SetAllPoints()
-  frame.btnSegment.tooltip = { "Select Segment", "|cffffffffOverall, Current" }
+  frame.btnSegment.tooltip = { L["Select Segment"], "|cffffffff" .. L["Overall"] .. ", " .. L["Current"] }
   frame.btnSegment:SetScript("OnEnter", btnEnter)
   frame.btnSegment:SetScript("OnLeave", btnLeave)
   frame.btnSegment:SetScript("OnClick", function()
@@ -726,6 +772,8 @@ local function CreateWindow(wid)
       frame.btnDPS:Hide()
       frame.btnHeal:Hide()
       frame.btnHPS:Hide()
+      frame.btnDT:Hide()
+      frame.btnDTPS:Hide()
       frame.btnOverall:Hide()
       frame.btnCurrent:Hide()
     else
@@ -733,6 +781,8 @@ local function CreateWindow(wid)
       frame.btnDPS:Hide()
       frame.btnHeal:Hide()
       frame.btnHPS:Hide()
+      frame.btnDT:Hide()
+      frame.btnDTPS:Hide()
       frame.btnOverall:Show()
       frame.btnCurrent:Show()
     end
@@ -749,9 +799,9 @@ local function CreateWindow(wid)
 
   frame.btnMode.caption = frame.btnMode:CreateFontString("ShaguDPSTitle", "OVERLAY", "GameFontWhite")
   frame.btnMode.caption:SetFont(STANDARD_TEXT_FONT, 9)
-  frame.btnMode.caption:SetText("Mode: Damage")
+  frame.btnMode.caption:SetText(L["Damage"])
   frame.btnMode.caption:SetAllPoints()
-  frame.btnMode.tooltip = { "Select Mode", "|cffffffffDamage, DPS, Heal, HPS" }
+  frame.btnMode.tooltip = { L["Select Mode"], "|cffffffff" .. L["Damage"] .. ", " .. L["DPS"] .. ", " .. L["Heal"] .. ", " .. L["HPS"] .. ", " .. L["Damage Taken"] .. ", " .. L["DTPS"] }
   frame.btnMode:SetScript("OnEnter", btnEnter)
   frame.btnMode:SetScript("OnLeave", btnLeave)
   frame.btnMode:SetScript("OnClick", function()
@@ -760,6 +810,8 @@ local function CreateWindow(wid)
       frame.btnDPS:Hide()
       frame.btnHeal:Hide()
       frame.btnHPS:Hide()
+      frame.btnDT:Hide()
+      frame.btnDTPS:Hide()
       frame.btnOverall:Hide()
       frame.btnCurrent:Hide()
     else
@@ -767,6 +819,8 @@ local function CreateWindow(wid)
       frame.btnDPS:Show()
       frame.btnHeal:Show()
       frame.btnHPS:Show()
+      frame.btnDT:Show()
+      frame.btnDTPS:Show()
       frame.btnOverall:Hide()
       frame.btnCurrent:Hide()
     end
@@ -789,7 +843,7 @@ local function CreateWindow(wid)
 
     button.caption = button:CreateFontString("ShaguDPS"..name.."Title", "OVERLAY", "GameFontWhite")
     button.caption:SetFont(STANDARD_TEXT_FONT, 9)
-    button.caption:SetText(name)
+    button.caption:SetText(template[7] or name)
     button.caption:SetAllPoints()
     button.tooltip = { template[4], template[5] }
     button:SetScript("OnEnter", btnEnter)
@@ -815,9 +869,9 @@ local function CreateWindow(wid)
   frame.btnAnnounce:SetBackdropColor(.2,.2,.2,1)
   frame.btnAnnounce:SetBackdropBorderColor(.4,.4,.4,1)
   frame.btnAnnounce.tooltip = {
-    "Send to Chat",
-    { "|cffffffffClick", "|cffaaaaaaAsk to anounce all data."},
-    { "|cffffffffShift-Click", "|cffaaaaaaAnnounce all data."},
+    L["Send to Chat"],
+    { "|cffffffff" .. L["Click"], "|cffaaaaaa" .. L["Ask to announce all data."]},
+    { "|cffffffff" .. L["Shift-Click"], "|cffaaaaaa" .. L["Announce all data."]},
   }
 
   frame.btnAnnounce.tex = frame.btnAnnounce:CreateTexture()
@@ -837,7 +891,7 @@ local function CreateWindow(wid)
       if not color then color = "|cff00FAF6" end
 
       local name = view_templates[config[frame:GetID()].view].name
-      local text = "Post |cffffdd00" .. name .. "|r data into /" .. color..string.lower(ctype) .. "|r?"
+      local text = string.format(L["Post %s data into %s?"], "|cffffdd00" .. name .. "|r", "/" .. color .. string.lower(ctype) .. "|r")
 
       local dialog = StaticPopupDialogs["SHAGUMETER_QUESTION"]
       dialog.text = text
@@ -856,8 +910,8 @@ local function CreateWindow(wid)
   frame.btnSettings:SetBackdropColor(.2,.2,.2,1)
   frame.btnSettings:SetBackdropBorderColor(.4,.4,.4,1)
   frame.btnSettings.tooltip = {
-    "Settings",
-    "|cffffffffShow Configuration Window"
+    L["Settings"],
+    "|cffffffff" .. L["Show Configuration Window"]
   }
 
   frame.btnSettings.tex = frame.btnSettings:CreateTexture()
@@ -884,9 +938,9 @@ local function CreateWindow(wid)
   frame.btnReset:SetBackdropColor(.2,.2,.2,1)
   frame.btnReset:SetBackdropBorderColor(.4,.4,.4,1)
   frame.btnReset.tooltip = {
-    "Reset Data",
-    { "|cffffffffClick", "|cffaaaaaaAsk to reset all data."},
-    { "|cffffffffShift-Click", "|cffaaaaaaReset all data."},
+    L["Reset Data"],
+    { "|cffffffff" .. L["Click"], "|cffaaaaaa" .. L["Ask to reset all data."]},
+    { "|cffffffff" .. L["Shift-Click"], "|cffaaaaaa" .. L["Reset all data."]},
   }
 
   frame.btnReset.tex = frame.btnReset:CreateTexture()
@@ -901,7 +955,7 @@ local function CreateWindow(wid)
       ResetData()
     else
       local dialog = StaticPopupDialogs["SHAGUMETER_QUESTION"]
-      dialog.text = "Do you wish to reset the data?"
+      dialog.text = L["Do you wish to reset the data?"]
       dialog.OnAccept = ResetData
       StaticPopup_Show("SHAGUMETER_QUESTION")
     end
@@ -924,8 +978,8 @@ local function CreateWindow(wid)
   if frame:GetID() == 1 then
     frame.btnWindow.tex:SetTexture("Interface\\AddOns\\ShaguDPS" .. (tbc and "-tbc" or "") .. "\\img\\plus")
     frame.btnWindow.tooltip = {
-      "New Window",
-      "|cffffffffCreate a new window"
+      L["New Window"],
+      "|cffffffff" .. L["Create a new window"]
     }
 
     frame.btnWindow:SetScript("OnClick", function()
@@ -940,8 +994,8 @@ local function CreateWindow(wid)
   else
     frame.btnWindow.tex:SetTexture("Interface\\AddOns\\ShaguDPS" .. (tbc and "-tbc" or "") .. "\\img\\minus")
     frame.btnWindow.tooltip = {
-      "Remove Window",
-      "|cffffffffDelete this window"
+      L["Remove Window"],
+      "|cffffffff" .. L["Delete this window"]
     }
 
     frame.btnWindow:SetScript("OnClick", function()

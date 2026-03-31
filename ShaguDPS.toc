@@ -8,6 +8,7 @@
 
 # main
 core.lua
+locales.lua
 
 # parser
 parser.lua
