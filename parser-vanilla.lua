@@ -1,4 +1,5 @@
 local parser = ShaguDPS.parser
+local L = ShaguDPS_Locale
 
 -- sanitize, cache and convert patterns into gfind compatible ones
 local sanitize_cache = {}
@@ -406,7 +407,6 @@ local resist = sanitize(RESIST_TRAILER)
 local _, num, pattern, result, a1, a2, a3, a4, a5
 
 -- use same strings each time
-local L = ShaguDPS_Locale
 local empty, physical, autohit = "", "physical", L["Auto Hit"]
 local player = UnitName("player")
 
