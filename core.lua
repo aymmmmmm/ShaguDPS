@@ -81,6 +81,7 @@ local config = {
   backdrop = 1,
   texture = 2,
   pastel = 0,
+  saturation = 10,
   lock = 0,
 }
 

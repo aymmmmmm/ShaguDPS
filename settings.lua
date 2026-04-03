@@ -245,6 +245,7 @@ settings:CreateConfig(L["Bar Texture"], "texture", ShaguDPS.textures)
 settings:CreateConfig(L["Bar Height"], "height", "number")
 settings:CreateConfig(L["Bar Spacing"], "spacing", "number")
 settings:CreateConfig(L["Pastel Colors"], "pastel", "boolean")
+settings:CreateConfig(L["Color Saturation"], "saturation", "number")
 settings:CreateConfig(L["Show Backdrops"], "backdrop", "boolean")
 settings:CreateConfig(L["Lock Windows"], "lock", "boolean")
 
@@ -265,6 +266,7 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
     p("  /sdps mergepet " .. config.merge_pets .. " |cffcccccc- " .. L["Merge pets into owner data"])
     p("  /sdps texture " .. config.texture .. " |cffcccccc- " .. L["Set the statusbar texture"])
     p("  /sdps pastel " .. config.pastel .. " |cffcccccc- " .. L["Use pastel colors"])
+    p("  /sdps saturation " .. config.saturation .. " |cffcccccc- " .. L["Color Saturation"] .. " (1-20)")
     p("  /sdps backdrop " .. config.backdrop .. " |cffcccccc- " .. L["Show window backdrop and border"])
     p("  /sdps lock " .. config.lock .. " |cffcccccc- " .. L["Lock window"])
     p("  /sdps toggle |cffcccccc- " .. L["Toggle window"])
@@ -355,6 +357,16 @@ SlashCmdList["SHAGUMETER"] = function(msg, editbox)
       p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Use pastel colors"] .. ": " .. config.pastel)
     else
       p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 0-1")
+    end
+  elseif strlower(cmd) == "saturation" then
+    if tonumber(args) and tonumber(args) >= 1 and tonumber(args) <= 20 then
+      config.saturation = tonumber(args)
+      ShaguDPS_Config = config
+      window.Refresh(true)
+
+      p("|cffffcc00Shagu|cffffffffDPS:|cffffddcc " .. L["Color Saturation"] .. ": " .. config.saturation)
+    else
+      p("|cffffcc00Shagu|cffffffffDPS:|cffff5511 " .. L["Valid Options are"] .. " 1-20")
     end
   elseif strlower(cmd) == "backdrop" then
     if tonumber(args) and (tonumber(args) == 1 or tonumber(args) == 0) then

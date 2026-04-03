@@ -22,6 +22,7 @@ L["Bar Texture"] = "Bar Texture"
 L["Bar Height"] = "Bar Height"
 L["Bar Spacing"] = "Bar Spacing"
 L["Pastel Colors"] = "Pastel Colors"
+L["Color Saturation"] = "Color Saturation"
 L["Show Backdrops"] = "Show Backdrops"
 L["Lock Windows"] = "Lock Windows"
 
@@ -116,6 +117,7 @@ if locale == "zhCN" or locale == "zhTW" then
   L["Bar Height"] = "条形高度"
   L["Bar Spacing"] = "条形间距"
   L["Pastel Colors"] = "柔和配色"
+  L["Color Saturation"] = "色彩饱和度"
   L["Show Backdrops"] = "显示背景"
   L["Lock Windows"] = "锁定窗口"
 

@@ -500,6 +500,14 @@ local function GetData(unitdata, values)
       values.color.g = (values.color.g + .5) * .5
       values.color.b = (values.color.b + .5) * .5
     end
+
+    local sat = (config.saturation or 10) / 10
+    if sat ~= 1 then
+      local avg = (values.color.r + values.color.g + values.color.b) / 3
+      values.color.r = math.max(0, math.min(1, avg + (values.color.r - avg) * sat))
+      values.color.g = math.max(0, math.min(1, avg + (values.color.g - avg) * sat))
+      values.color.b = math.max(0, math.min(1, avg + (values.color.b - avg) * sat))
+    end
   end
 
   return values
