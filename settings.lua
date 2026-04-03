@@ -87,7 +87,7 @@ local function CreateSelector(self, values)
     if mod and self.values and self.values[id + mod] then
       config[self.entry] = math.ceil(config[self.entry] + mod)
     elseif mod and not values then
-      config[self.entry] = math.ceil(config[self.entry] + mod)
+      config[self.entry] = math.max(1, math.min(20, math.ceil(config[self.entry] + mod)))
     end
 
     if self.values and self.values[config[self.entry]] then
@@ -99,11 +99,15 @@ local function CreateSelector(self, values)
 
     if self.values and not self.values[config[self.entry]+1] then
       self.right:SetAlpha(0.25)
+    elseif not self.values and config[self.entry] >= 20 then
+      self.right:SetAlpha(0.25)
     else
       self.right:SetAlpha(1.00)
     end
 
     if self.values and not self.values[config[self.entry]-1] then
+      self.left:SetAlpha(0.25)
+    elseif not self.values and config[self.entry] <= 1 then
       self.left:SetAlpha(0.25)
     else
       self.left:SetAlpha(1.00)
@@ -186,7 +190,7 @@ end)
 settings:Hide()
 settings:SetPoint("CENTER", UIParent, "CENTER", 0, 32)
 settings:SetWidth(192)
-settings:SetHeight(216)
+settings:SetHeight(240)
 settings:SetMovable(true)
 settings:EnableMouse(true)
 settings:RegisterForDrag("LeftButton")
