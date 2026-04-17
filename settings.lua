@@ -209,7 +209,7 @@ settings.border = CreateFrame("Frame", nil, settings)
 settings.border:ClearAllPoints()
 settings.border:SetPoint("TOPLEFT", settings, "TOPLEFT", -1,1)
 settings.border:SetPoint("BOTTOMRIGHT", settings, "BOTTOMRIGHT", 1,-1)
-settings.border:SetFrameLevel(100)
+settings.border:SetFrameLevel(settings:GetFrameLevel() + 2)
 settings.border:SetBackdrop(backdrop_border)
 settings.border:SetBackdropBorderColor(.7,.7,.7,1)
 
